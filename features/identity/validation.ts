@@ -133,3 +133,24 @@ export const schoolMembershipInputSchema = z.object({
 });
 
 export type SchoolMembershipInput = z.input<typeof schoolMembershipInputSchema>;
+
+export const MEMBERSHIP_STATUS_FILTERS = [
+  "ALL",
+  ...MEMBERSHIP_STATUSES,
+] as const;
+
+export const MEMBERSHIP_SEARCH_MAX_LENGTH = 100;
+
+/**
+ * The filters of the school membership list.
+ *
+ * They arrive from the query string, where anything may appear, so every field
+ * falls back to its default instead of failing the page. The filters narrow a
+ * list that is already scoped to the active school; they never widen it.
+ */
+export const membershipFilterSchema = z.object({
+  search: z.string().trim().max(MEMBERSHIP_SEARCH_MAX_LENGTH).catch(""),
+  status: z.enum(MEMBERSHIP_STATUS_FILTERS).catch("ALL"),
+});
+
+export type MembershipFilter = z.infer<typeof membershipFilterSchema>;

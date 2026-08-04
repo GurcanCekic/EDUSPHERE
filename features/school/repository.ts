@@ -1,7 +1,11 @@
 import "server-only";
 
 import { query, queryOne } from "@/lib/db";
-import type { SchoolRoleKey } from "@/features/identity/validation";
+import type {
+  MembershipFilter,
+  MembershipStatus,
+  SchoolRoleKey,
+} from "@/features/identity/validation";
 
 /** The editable profile of a school. */
 export type SchoolProfile = {
@@ -94,5 +98,65 @@ export async function findActiveMembership(
        AND school_memberships.user_id = $2
        AND school_memberships.status = 'ACTIVE'`,
     [membershipId, userId],
+  );
+}
+
+/**
+ * One membership of the active school, as shown to access administrators.
+ *
+ * It carries only what administering school access needs. The platform level
+ * identity of the user stays out of it, and so does the password hash.
+ */
+export type SchoolMembershipListItem = {
+  id: string;
+  username: string | null;
+  email: string | null;
+  role_key: SchoolRoleKey;
+  status: MembershipStatus;
+};
+
+/**
+ * Escapes the characters `LIKE` treats as wildcards.
+ *
+ * Without this a typed `%` or `_` would silently match anything, so the search
+ * box would not behave the way it reads. The backslash is escaped first, since
+ * it is the escape character itself.
+ */
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, "\\$&");
+}
+
+/**
+ * Lists the memberships of one school.
+ *
+ * The school identifier comes from the validated school context and is a fixed
+ * part of the query, so search and status can only ever narrow the result
+ * inside that school. A membership of another school cannot be reached through
+ * any combination of filters.
+ */
+export async function listSchoolMemberships(
+  schoolId: string,
+  filter: MembershipFilter,
+): Promise<SchoolMembershipListItem[]> {
+  const status = filter.status === "ALL" ? null : filter.status;
+  const search =
+    filter.search.length > 0 ? escapeLikePattern(filter.search) : null;
+
+  return query<SchoolMembershipListItem>(
+    `SELECT school_memberships.id,
+            school_memberships.username,
+            users.email,
+            school_memberships.role_key,
+            school_memberships.status
+     FROM school_memberships
+     JOIN users ON users.id = school_memberships.user_id
+     WHERE school_memberships.school_id = $1
+       AND ($2::text IS NULL OR school_memberships.status = $2)
+       AND ($3::text IS NULL
+            OR school_memberships.username ILIKE '%' || $3 || '%' ESCAPE '\\'
+            OR users.email ILIKE '%' || $3 || '%' ESCAPE '\\')
+     ORDER BY COALESCE(school_memberships.username, users.email, ''),
+              school_memberships.id`,
+    [schoolId, status, search],
   );
 }
