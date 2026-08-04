@@ -4,6 +4,7 @@ import { z } from "zod";
 // This module is the only place that reads `process.env`.
 const envSchema = z.object({
   APP_NAME: z.string().min(1),
+  APP_DESCRIPTION: z.string().min(1),
 });
 
 const parsed = envSchema.safeParse(process.env);
