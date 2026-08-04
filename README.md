@@ -20,6 +20,20 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Database
+
+Copy `.env.example` to `.env` and set `DATABASE_URL` to your PostgreSQL
+connection string. Credentials are never committed.
+
+Schema changes are version controlled as migrations in `migrations/`:
+
+```bash
+npm run db:migrate         # apply pending migrations
+npm run db:migrate:down    # roll back the most recent migration
+npm run db:migrate:status  # show pending migrations without applying them
+npm run db:migrate:create  # scaffold a new migration
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
