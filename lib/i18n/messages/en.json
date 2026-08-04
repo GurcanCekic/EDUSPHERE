@@ -21,6 +21,22 @@
       "submit": "Sign out"
     }
   },
+  "school": {
+    "activeSchool": "Active school",
+    "switch": "Switch school",
+    "select": {
+      "title": "Select a school",
+      "description": "Choose the school you want to work in.",
+      "empty": "You do not have an active school membership."
+    },
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Administrator",
+      "TEACHER": "Teacher",
+      "STUDENT": "Student",
+      "PARENT": "Parent"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "signedInAs": "Signed in as"

@@ -50,10 +50,20 @@ export async function createSession(userId: string): Promise<void> {
 }
 
 /**
- * Returns the authenticated user identifier, or null when the request carries
- * no valid session. This is the accessor server side code should use.
+ * The stored state of the current session.
+ *
+ * `activeMembershipId` is the school context. It is only a pointer: whether it
+ * still grants access is decided by the school context code on every request.
  */
-export async function getCurrentUserId(): Promise<string | null> {
+export type CurrentSession = {
+  userId: string;
+  activeMembershipId: string | null;
+};
+
+/**
+ * Returns the current session, or null when the request carries no valid one.
+ */
+export async function getCurrentSession(): Promise<CurrentSession | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
@@ -61,15 +71,58 @@ export async function getCurrentUserId(): Promise<string | null> {
     return null;
   }
 
-  const session = await queryOne<{ user_id: string }>(
-    `SELECT user_id
+  const session = await queryOne<{
+    user_id: string;
+    active_membership_id: string | null;
+  }>(
+    `SELECT user_id, active_membership_id
      FROM sessions
      WHERE token_hash = $1
        AND expires_at > now()`,
     [hashToken(token)],
   );
 
-  return session?.user_id ?? null;
+  if (!session) {
+    return null;
+  }
+
+  return {
+    userId: session.user_id,
+    activeMembershipId: session.active_membership_id,
+  };
+}
+
+/**
+ * Returns the authenticated user identifier, or null when the request carries
+ * no valid session. This is the accessor server side code should use.
+ */
+export async function getCurrentUserId(): Promise<string | null> {
+  const session = await getCurrentSession();
+
+  return session?.userId ?? null;
+}
+
+/**
+ * Records the active school membership on the current session.
+ *
+ * The membership must already have been validated against the authenticated
+ * user: this function only writes what it is given.
+ */
+export async function setActiveMembership(membershipId: string): Promise<void> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+  if (!token) {
+    return;
+  }
+
+  await query(
+    `UPDATE sessions
+     SET active_membership_id = $2
+     WHERE token_hash = $1
+       AND expires_at > now()`,
+    [hashToken(token), membershipId],
+  );
 }
 
 /**

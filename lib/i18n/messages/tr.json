@@ -21,6 +21,22 @@
       "submit": "Çıkış yap"
     }
   },
+  "school": {
+    "activeSchool": "Etkin okul",
+    "switch": "Okul değiştir",
+    "select": {
+      "title": "Okul seçin",
+      "description": "Çalışmak istediğiniz okulu seçin.",
+      "empty": "Etkin bir okul üyeliğiniz bulunmuyor."
+    },
+    "roles": {
+      "OWNER": "Sahip",
+      "ADMIN": "Yönetici",
+      "TEACHER": "Öğretmen",
+      "STUDENT": "Öğrenci",
+      "PARENT": "Veli"
+    }
+  },
   "dashboard": {
     "title": "Panel",
     "signedInAs": "Oturum açan kullanıcı"
