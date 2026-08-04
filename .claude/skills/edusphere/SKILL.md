@@ -33,7 +33,6 @@ Always follow `CLAUDE.md`.
 ## Shared rules
 
 * Work on one active feature only.
-* Read `context/project-status.md`.
 * Read `context/active-feature.md`.
 * Do not expand feature scope.
 * Do not perform unrelated refactoring.
@@ -67,7 +66,6 @@ Prepare the repository for implementation of the current active feature.
 1. Read:
 
    * `CLAUDE.md`
-   * `context/project-status.md`
    * `context/active-feature.md`
 2. Determine the active feature ID and title.
 3. Run `git status --short`.
@@ -97,7 +95,6 @@ Review the current active feature without merging or pushing.
 1. Read:
 
    * `CLAUDE.md`
-   * `context/project-status.md`
    * `context/active-feature.md`
 2. Confirm the current branch matches the active feature.
 3. Inspect:
@@ -144,7 +141,6 @@ Close the current active feature safely.
 1. Read:
 
    * `CLAUDE.md`
-   * `context/project-status.md`
    * `context/active-feature.md`
 2. Confirm the current branch matches the active feature.
 3. Confirm there are feature changes to finish.
@@ -154,7 +150,6 @@ Close the current active feature safely.
 7. Update the required governance documentation:
 
    * `context/active-feature.md`
-   * `context/project-status.md`
    * `context/feature-history.md`, if it exists
    * architecture decision records only when an approved architectural decision changed
 8. Review the final diff after documentation updates.
