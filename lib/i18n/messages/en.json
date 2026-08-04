@@ -37,8 +37,10 @@
       "PARENT": "Parent"
     }
   },
+  "workspace": {
+    "navigation": "Workspace"
+  },
   "dashboard": {
-    "title": "Dashboard",
-    "signedInAs": "Signed in as"
+    "title": "Dashboard"
   }
 }

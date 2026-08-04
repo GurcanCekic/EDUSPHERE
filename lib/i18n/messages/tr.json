@@ -37,8 +37,10 @@
       "PARENT": "Veli"
     }
   },
+  "workspace": {
+    "navigation": "Çalışma alanı"
+  },
   "dashboard": {
-    "title": "Panel",
-    "signedInAs": "Oturum açan kullanıcı"
+    "title": "Panel"
   }
 }
