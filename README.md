@@ -34,6 +34,34 @@ npm run db:migrate:status  # show pending migrations without applying them
 npm run db:migrate:create  # scaffold a new migration
 ```
 
+## Development seed data
+
+`npm run db:seed` fills a local database with the accounts used to exercise
+sign-in, school switching, and school authorization. Run the migrations first.
+
+The command is safe to repeat: every record is keyed on an existing unique
+constraint, so running it again updates the seeded rows instead of duplicating
+them. It refuses to run when `NODE_ENV` is `production`.
+
+All seeded accounts share the development password `Password123!`. It is a
+local-only value that exists solely to make these accounts usable; only its
+bcrypt hash is stored, and it must never be reused anywhere real.
+
+| Email                    | Riverside College (`riverside`) | Lakeside Academy (`lakeside`) |
+| ------------------------ | ------------------------------- | ----------------------------- |
+| `owner@edusphere.test`   | Owner                           | —                             |
+| `admin@edusphere.test`   | Administrator                   | —                             |
+| `teacher@edusphere.test` | Teacher, username `teacher`     | Administrator                 |
+| `student@edusphere.test` | Student, username `student`     | Student, **inactive**         |
+
+Every account signs in with its email. `teacher` and `student` also sign in with
+the username method, using the school slug `riverside`.
+
+`teacher@edusphere.test` is the account for checking authorization: they may
+edit the school profile at Lakeside Academy but not at Riverside College.
+`student@edusphere.test` has an inactive Lakeside membership, which must never
+appear in the school switcher or grant access.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
