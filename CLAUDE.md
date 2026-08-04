@@ -145,6 +145,16 @@ Never modify completed feature specifications unless explicitly instructed.
 
 ---
 
+# Commit Message Rules
+
+Never add `Co-Authored-By` trailers to commit messages.
+
+Never add tool attribution or generated-by footers to commits or pull request descriptions.
+
+Keep commit messages focused on what changed and why.
+
+---
+
 # Completion Checklist
 
 Before considering a feature complete:
