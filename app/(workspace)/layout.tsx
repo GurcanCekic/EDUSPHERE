@@ -39,7 +39,10 @@ export default async function WorkspaceLayout({
       />
       <WorkspaceNav
         label={messages.workspace.navigation}
-        items={[{ href: "/dashboard", label: messages.dashboard.title }]}
+        items={[
+          { href: "/dashboard", label: messages.dashboard.title },
+          { href: "/school", label: messages.school.profile.title },
+        ]}
       />
       <main className="flex flex-1 flex-col gap-6 p-6">{children}</main>
     </div>

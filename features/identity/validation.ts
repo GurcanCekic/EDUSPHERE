@@ -44,8 +44,10 @@ export function normalizeUsername(
   return normalized.length > 0 ? normalized : null;
 }
 
+export const SCHOOL_NAME_MAX_LENGTH = 200;
+
 export const schoolInputSchema = z.object({
-  name: z.string().trim().min(1).max(200),
+  name: z.string().trim().min(1).max(SCHOOL_NAME_MAX_LENGTH),
   slug: z
     .string()
     .transform(normalizeSlug)

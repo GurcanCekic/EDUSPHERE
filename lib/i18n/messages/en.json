@@ -29,6 +29,21 @@
       "description": "Choose the school you want to work in.",
       "empty": "You do not have an active school membership."
     },
+    "profile": {
+      "title": "School profile",
+      "name": "School name",
+      "slug": "School slug",
+      "slugHint": "Members who sign in with a username use this slug.",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "The school profile has been updated.",
+      "errors": {
+        "forbidden": "You are not allowed to update this school.",
+        "invalidName": "Enter a school name.",
+        "invalidSlug": "The slug must contain at least one letter or digit.",
+        "duplicateSlug": "That slug is already used by another school."
+      }
+    },
     "roles": {
       "OWNER": "Owner",
       "ADMIN": "Administrator",

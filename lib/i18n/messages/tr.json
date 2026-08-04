@@ -29,6 +29,21 @@
       "description": "Çalışmak istediğiniz okulu seçin.",
       "empty": "Etkin bir okul üyeliğiniz bulunmuyor."
     },
+    "profile": {
+      "title": "Okul profili",
+      "name": "Okul adı",
+      "slug": "Okul kısa adı",
+      "slugHint": "Kullanıcı adıyla giriş yapan üyeler bu kısa adı kullanır.",
+      "save": "Değişiklikleri kaydet",
+      "saving": "Kaydediliyor…",
+      "saved": "Okul profili güncellendi.",
+      "errors": {
+        "forbidden": "Bu okulu güncelleme yetkiniz yok.",
+        "invalidName": "Bir okul adı girin.",
+        "invalidSlug": "Kısa ad en az bir harf veya rakam içermelidir.",
+        "duplicateSlug": "Bu kısa ad başka bir okul tarafından kullanılıyor."
+      }
+    },
     "roles": {
       "OWNER": "Sahip",
       "ADMIN": "Yönetici",
