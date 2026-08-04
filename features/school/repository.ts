@@ -3,6 +3,44 @@ import "server-only";
 import { query, queryOne } from "@/lib/db";
 import type { SchoolRoleKey } from "@/features/identity/validation";
 
+/** The editable profile of a school. */
+export type SchoolProfile = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+/**
+ * Reads one school by identifier.
+ *
+ * The identifier always comes from the validated school context, never from a
+ * request, which is what keeps a member inside their own school.
+ */
+export async function findSchoolById(
+  schoolId: string,
+): Promise<SchoolProfile | null> {
+  return queryOne<SchoolProfile>(
+    `SELECT id, name, slug
+     FROM schools
+     WHERE id = $1`,
+    [schoolId],
+  );
+}
+
+/** Updates the profile of one school. */
+export async function updateSchool(
+  schoolId: string,
+  input: { name: string; slug: string },
+): Promise<SchoolProfile | null> {
+  return queryOne<SchoolProfile>(
+    `UPDATE schools
+     SET name = $2, slug = $3
+     WHERE id = $1
+     RETURNING id, name, slug`,
+    [schoolId, input.name, input.slug],
+  );
+}
+
 /** An active membership of a user, together with the school it belongs to. */
 export type ActiveMembership = {
   id: string;
