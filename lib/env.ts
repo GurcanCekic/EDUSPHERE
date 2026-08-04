@@ -5,6 +5,7 @@ import { z } from "zod";
 const envSchema = z.object({
   APP_NAME: z.string().min(1),
   APP_DESCRIPTION: z.string().min(1),
+  DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),
 });
 
 const parsed = envSchema.safeParse(process.env);
