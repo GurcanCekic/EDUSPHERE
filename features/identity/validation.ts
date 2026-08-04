@@ -84,6 +84,41 @@ export const userInputSchema = z.object({
 
 export type UserInput = z.input<typeof userInputSchema>;
 
+export const LOGIN_METHODS = ["email", "username"] as const;
+
+export type LoginMethod = (typeof LOGIN_METHODS)[number];
+
+/**
+ * Credentials submitted by the login form.
+ *
+ * The submitted password is only checked for presence: strength rules apply
+ * when a password is set, not when an existing one is verified. Rejecting an
+ * existing short password here would also reveal nothing useful to the user.
+ */
+export const loginSchema = z.discriminatedUnion("method", [
+  z.object({
+    method: z.literal("email"),
+    // Normalizing before validating keeps the lookup value identical to the
+    // stored one. Piping keeps the parsed type a plain string.
+    email: z
+      .string()
+      .transform((value) => normalizeEmail(value) ?? "")
+      .pipe(z.email()),
+    password: z.string().min(1),
+  }),
+  z.object({
+    method: z.literal("username"),
+    // The school slug always arrives from the form and is resolved server side,
+    // so a username lookup can never escape its school.
+    schoolSlug: z.string().transform(normalizeSlug).pipe(z.string().min(1)),
+    username: z
+      .string()
+      .transform((value) => normalizeUsername(value) ?? "")
+      .pipe(z.string().min(1)),
+    password: z.string().min(1),
+  }),
+]);
+
 export const schoolMembershipInputSchema = z.object({
   schoolId: z.uuid(),
   userId: z.uuid(),

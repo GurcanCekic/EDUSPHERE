@@ -2,5 +2,27 @@
   "home": {
     "title": "EDUSPHERE",
     "getStarted": "Başlayın"
+  },
+  "auth": {
+    "login": {
+      "title": "Giriş yap",
+      "methodLegend": "Giriş yöntemi",
+      "methodEmail": "E-posta",
+      "methodUsername": "Okul kullanıcı adı",
+      "email": "E-posta",
+      "schoolSlug": "Okul",
+      "username": "Kullanıcı adı",
+      "password": "Parola",
+      "submit": "Giriş yap",
+      "submitting": "Giriş yapılıyor…",
+      "error": "Kimlik bilgileriniz hatalı."
+    },
+    "logout": {
+      "submit": "Çıkış yap"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "signedInAs": "Oturum açan kullanıcı"
   }
 }

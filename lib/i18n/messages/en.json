@@ -2,5 +2,27 @@
   "home": {
     "title": "EDUSPHERE",
     "getStarted": "Get started"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "methodLegend": "Sign in with",
+      "methodEmail": "Email",
+      "methodUsername": "School username",
+      "email": "Email",
+      "schoolSlug": "School",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "error": "Your credentials are incorrect."
+    },
+    "logout": {
+      "submit": "Sign out"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "signedInAs": "Signed in as"
   }
 }

@@ -84,6 +84,51 @@ export async function createSchoolMembership(
   return membership as SchoolMembership;
 }
 
+/**
+ * A user identifier paired with its stored password hash.
+ *
+ * This type never leaves the server: only authentication code may read it, and
+ * the hash must never be returned to a client, rendered, or logged.
+ */
+type UserCredentials = {
+  id: string;
+  password_hash: string | null;
+};
+
+/** Looks up credentials by email. Returns null when no such user exists. */
+export async function findCredentialsByEmail(
+  email: string,
+): Promise<UserCredentials | null> {
+  return queryOne<UserCredentials>(
+    `SELECT id, password_hash
+     FROM users
+     WHERE email = $1`,
+    [email],
+  );
+}
+
+/**
+ * Looks up credentials by school slug and school specific username.
+ *
+ * The username is only ever resolved inside the supplied school, and inactive
+ * memberships are excluded, so a suspended member cannot sign in.
+ */
+export async function findCredentialsBySchoolUsername(
+  schoolSlug: string,
+  username: string,
+): Promise<UserCredentials | null> {
+  return queryOne<UserCredentials>(
+    `SELECT users.id, users.password_hash
+     FROM users
+     JOIN school_memberships ON school_memberships.user_id = users.id
+     JOIN schools ON schools.id = school_memberships.school_id
+     WHERE schools.slug = $1
+       AND school_memberships.username = $2
+       AND school_memberships.status = 'ACTIVE'`,
+    [schoolSlug, username],
+  );
+}
+
 /** Returns the school role keys defined in the database. */
 export async function listSchoolRoleKeys(): Promise<SchoolRoleKey[]> {
   const rows = await query<{ key: SchoolRoleKey }>(
