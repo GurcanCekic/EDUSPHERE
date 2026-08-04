@@ -44,6 +44,35 @@
         "duplicateSlug": "Bu kısa ad başka bir okul tarafından kullanılıyor."
       }
     },
+    "members": {
+      "title": "Okul üyeleri",
+      "description": "Bu okula erişimi olan kişiler.",
+      "search": "Ara",
+      "searchPlaceholder": "Görünen ad veya kullanıcı adı",
+      "status": "Durum",
+      "apply": "Uygula",
+      "reset": "Sıfırla",
+      "columns": {
+        "displayName": "Görünen ad",
+        "username": "Okul kullanıcı adı",
+        "email": "E-posta",
+        "role": "Okul rolü",
+        "status": "Durum"
+      },
+      "statuses": {
+        "ALL": "Tümü",
+        "ACTIVE": "Etkin",
+        "INACTIVE": "Etkin değil"
+      },
+      "unnamed": "Adsız üye",
+      "none": "—",
+      "loading": "Üyeler yükleniyor…",
+      "empty": "Bu okulun henüz üyesi yok.",
+      "noResults": "Aramanızla eşleşen üye bulunamadı.",
+      "unauthorized": "Bu okulun üyelerini görüntüleme yetkiniz yok.",
+      "error": "Üye listesi yüklenemedi.",
+      "retry": "Yeniden dene"
+    },
     "roles": {
       "OWNER": "Sahip",
       "ADMIN": "Yönetici",

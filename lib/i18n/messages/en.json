@@ -44,6 +44,35 @@
         "duplicateSlug": "That slug is already used by another school."
       }
     },
+    "members": {
+      "title": "School members",
+      "description": "The people who have access to this school.",
+      "search": "Search",
+      "searchPlaceholder": "Display name or username",
+      "status": "Status",
+      "apply": "Apply",
+      "reset": "Reset",
+      "columns": {
+        "displayName": "Display name",
+        "username": "School username",
+        "email": "Email",
+        "role": "School role",
+        "status": "Status"
+      },
+      "statuses": {
+        "ALL": "All",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      },
+      "unnamed": "Unnamed member",
+      "none": "—",
+      "loading": "Loading members…",
+      "empty": "This school has no members yet.",
+      "noResults": "No member matches your search.",
+      "unauthorized": "You are not allowed to view the members of this school.",
+      "error": "The member list could not be loaded.",
+      "retry": "Try again"
+    },
     "roles": {
       "OWNER": "Owner",
       "ADMIN": "Administrator",

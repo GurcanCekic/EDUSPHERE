@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { WorkspaceHeader } from "./workspace-header";
 import { WorkspaceNav } from "./workspace-nav";
+import { canManageSchoolAccess } from "@/features/school/authorization";
 import { requireSchoolContext } from "@/features/school/context";
 import { listActiveMemberships } from "@/features/school/repository";
 import { getMessages } from "@/lib/i18n";
@@ -42,6 +43,9 @@ export default async function WorkspaceLayout({
         items={[
           { href: "/dashboard", label: messages.dashboard.title },
           { href: "/school", label: messages.school.profile.title },
+          ...(canManageSchoolAccess(context.roleKey)
+            ? [{ href: "/members", label: messages.school.members.title }]
+            : []),
         ]}
       />
       <main className="flex flex-1 flex-col gap-6 p-6">{children}</main>

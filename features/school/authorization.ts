@@ -12,3 +12,20 @@ const SCHOOL_MANAGER_ROLES: readonly SchoolRoleKey[] = ["OWNER", "ADMIN"];
 export function canManageSchool(roleKey: SchoolRoleKey): boolean {
   return SCHOOL_MANAGER_ROLES.includes(roleKey);
 }
+
+/** The roles allowed to administer who has access to the school. */
+const SCHOOL_ACCESS_MANAGER_ROLES: readonly SchoolRoleKey[] = [
+  "OWNER",
+  "ADMIN",
+];
+
+/**
+ * Decides whether a role may read the school's memberships.
+ *
+ * Kept separate from `canManageSchool` even though the two sets currently
+ * match: access administration and school profile editing are different
+ * permissions and may diverge.
+ */
+export function canManageSchoolAccess(roleKey: SchoolRoleKey): boolean {
+  return SCHOOL_ACCESS_MANAGER_ROLES.includes(roleKey);
+}
