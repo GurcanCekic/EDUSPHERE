@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { defaultLocale } from "@/lib/i18n/locales";
+import { env } from "@/lib/env";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EDUSPHERE",
-  description: "EDUSPHERE",
+  title: env.APP_NAME,
+  description: env.APP_NAME,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
