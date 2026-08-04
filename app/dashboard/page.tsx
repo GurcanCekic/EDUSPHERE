@@ -1,20 +1,22 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { logout } from "@/features/auth/actions";
-import { getCurrentUserId } from "@/features/auth/session";
+import { requireSchoolContext } from "@/features/school/context";
+import { listActiveMemberships } from "@/features/school/repository";
 import { getMessages } from "@/lib/i18n";
 
 /**
- * The minimal authenticated page. Access requires a valid session only: school
- * role and permission checks are not part of this feature.
+ * A school scoped page. The guard supplies the validated school context, so
+ * access requires an authenticated user with an active membership.
  */
 export default async function DashboardPage() {
-  const userId = await getCurrentUserId();
+  const context = await requireSchoolContext();
 
-  if (!userId) {
-    redirect("/login");
-  }
+  const memberships = await listActiveMemberships(context.userId);
+  const activeMembership = memberships.find(
+    (membership) => membership.id === context.membershipId,
+  );
 
   const messages = getMessages();
 
@@ -24,8 +26,21 @@ export default async function DashboardPage() {
         {messages.dashboard.title}
       </h1>
       <p className="text-sm text-muted-foreground">
-        {messages.dashboard.signedInAs} {userId}
+        {messages.dashboard.signedInAs} {context.userId}
       </p>
+      <p className="text-sm text-muted-foreground">
+        {messages.school.activeSchool} {activeMembership?.school_name}
+      </p>
+
+      {memberships.length > 1 ? (
+        <Link
+          href="/select-school"
+          className={buttonVariants({ variant: "link" })}
+        >
+          {messages.school.switch}
+        </Link>
+      ) : null}
+
       <form action={logout}>
         <Button type="submit" variant="outline" size="lg">
           {messages.auth.logout.submit}
