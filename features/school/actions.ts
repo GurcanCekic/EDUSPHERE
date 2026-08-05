@@ -9,8 +9,15 @@ import {
   getCurrentSession,
   setActiveMembership,
 } from "@/features/auth/session";
-import { schoolInputSchema } from "@/features/identity/validation";
-import { canManageSchool } from "@/features/school/authorization";
+import { createSchoolUser } from "@/features/identity/repository";
+import {
+  createSchoolUserSchema,
+  schoolInputSchema,
+} from "@/features/identity/validation";
+import {
+  canManageSchool,
+  canManageSchoolAccess,
+} from "@/features/school/authorization";
 import { requireSchoolContext } from "@/features/school/context";
 import {
   findActiveMembership,
@@ -123,4 +130,101 @@ export async function updateSchoolProfile(
   revalidatePath("/", "layout");
 
   return { saved: true, error: null };
+}
+
+/** Returns the violated unique constraint, or null for any other error. */
+function uniqueViolationConstraint(error: unknown): string | null {
+  if (!isUniqueViolation(error)) {
+    return null;
+  }
+
+  const constraint = (error as { constraint?: unknown }).constraint;
+
+  return typeof constraint === "string" ? constraint : null;
+}
+
+/**
+ * The outcome of creating a school user.
+ *
+ * Only error codes cross this boundary; the form translates them. The
+ * submitted password is never part of the state, so it cannot end up in a
+ * response, a log, or the browser.
+ */
+export type CreateSchoolUserState = {
+  created: boolean;
+  error:
+    | "forbidden"
+    | "invalidUsername"
+    | "invalidEmail"
+    | "invalidPassword"
+    | "invalidRole"
+    | "duplicateUsername"
+    | "duplicateEmail"
+    | null;
+};
+
+/** Maps the first failing field to the error code the form displays. */
+const FIELD_ERRORS: Record<string, CreateSchoolUserState["error"]> = {
+  username: "invalidUsername",
+  email: "invalidEmail",
+  password: "invalidPassword",
+  roleKey: "invalidRole",
+};
+
+/**
+ * Creates a user and adds them to the active school.
+ *
+ * The school is taken from the validated context and the role of the caller is
+ * checked on every call, so the form can neither choose the school nor grant
+ * itself the permission. The new membership is therefore always, and only, in
+ * the active school.
+ */
+export async function createSchoolUserAction(
+  _previousState: CreateSchoolUserState,
+  formData: FormData,
+): Promise<CreateSchoolUserState> {
+  const context = await requireSchoolContext();
+
+  if (!canManageSchoolAccess(context.roleKey)) {
+    return { created: false, error: "forbidden" };
+  }
+
+  const parsed = createSchoolUserSchema.safeParse({
+    username: String(formData.get("username") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
+    roleKey: String(formData.get("roleKey") ?? ""),
+  });
+
+  if (!parsed.success) {
+    const failedField = String(parsed.error.issues[0]?.path[0] ?? "");
+
+    return {
+      created: false,
+      error: FIELD_ERRORS[failedField] ?? "invalidUsername",
+    };
+  }
+
+  try {
+    await createSchoolUser(context.schoolId, parsed.data);
+  } catch (error) {
+    // Both uniqueness rules are enforced by the database, so the check and the
+    // write stay a single step and two administrators cannot claim the same
+    // username or email at the same time.
+    const constraint = uniqueViolationConstraint(error);
+
+    if (constraint === "school_memberships_school_username_key") {
+      return { created: false, error: "duplicateUsername" };
+    }
+
+    if (constraint === "users_email_key") {
+      return { created: false, error: "duplicateEmail" };
+    }
+
+    throw error;
+  }
+
+  revalidatePath("/members");
+
+  return { created: true, error: null };
 }

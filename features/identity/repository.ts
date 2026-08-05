@@ -3,9 +3,11 @@ import "server-only";
 import { query, queryOne } from "@/lib/db";
 import { hashPassword } from "@/features/identity/password";
 import {
+  createSchoolUserSchema,
   schoolInputSchema,
   schoolMembershipInputSchema,
   userInputSchema,
+  type CreateSchoolUser,
   type MembershipStatus,
   type SchoolInput,
   type SchoolMembershipInput,
@@ -82,6 +84,47 @@ export async function createSchoolMembership(
   );
 
   return membership as SchoolMembership;
+}
+
+/** The identifiers written when a school user is created. */
+export type CreatedSchoolUser = {
+  user_id: string;
+  membership_id: string;
+};
+
+/**
+ * Creates a global user and its membership in one school.
+ *
+ * The two rows are written by a single statement so that a user can never be
+ * left behind without the membership it was created for. The school identifier
+ * is a separate argument and always comes from the validated school context,
+ * never from the submitted form.
+ *
+ * Only the password hash is written; the plain text value stays in this
+ * function and is never returned or logged.
+ */
+export async function createSchoolUser(
+  schoolId: string,
+  input: CreateSchoolUser,
+): Promise<CreatedSchoolUser> {
+  const { username, email, password, roleKey } =
+    createSchoolUserSchema.parse(input);
+  const passwordHash = await hashPassword(password);
+
+  const created = await queryOne<CreatedSchoolUser>(
+    `WITH new_user AS (
+       INSERT INTO users (email, password_hash)
+       VALUES ($1, $2)
+       RETURNING id
+     )
+     INSERT INTO school_memberships (school_id, user_id, role_key, username, status)
+     SELECT $3, new_user.id, $4, $5, 'ACTIVE'
+     FROM new_user
+     RETURNING user_id, id AS membership_id`,
+    [email, passwordHash, schoolId, roleKey, username],
+  );
+
+  return created as CreatedSchoolUser;
 }
 
 /**

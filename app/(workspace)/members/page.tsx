@@ -1,3 +1,4 @@
+import { CreateSchoolUserForm } from "./create-school-user-form";
 import { MembersFilters } from "./members-filters";
 import { membershipFilterSchema } from "@/features/identity/validation";
 import { canManageSchoolAccess } from "@/features/school/authorization";
@@ -30,7 +31,8 @@ function displayName(
  * with a message and no query is made at all, so membership data never leaves
  * the database for them.
  *
- * The list is read only: this feature adds no way to change a membership.
+ * Authorized roles may also create a school user here. Existing memberships
+ * stay read only: there is still no way to change one.
  */
 export default async function MembersPage({
   searchParams,
@@ -73,6 +75,11 @@ export default async function MembersPage({
           {memberMessages.description}
         </p>
       </div>
+
+      <CreateSchoolUserForm
+        messages={memberMessages.create}
+        roleLabels={messages.school.roles}
+      />
 
       <MembersFilters filter={filter} messages={memberMessages} />
 

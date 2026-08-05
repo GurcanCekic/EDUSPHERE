@@ -71,7 +71,30 @@
       "noResults": "No member matches your search.",
       "unauthorized": "You are not allowed to view the members of this school.",
       "error": "The member list could not be loaded.",
-      "retry": "Try again"
+      "retry": "Try again",
+      "create": {
+        "title": "Create school user",
+        "description": "Create a user account and add it to this school.",
+        "username": "School username",
+        "usernameHint": "Used to sign in together with the school slug.",
+        "email": "Email (optional)",
+        "emailHint": "When provided, the user may also sign in with the email.",
+        "password": "Initial password",
+        "passwordHint": "At least 8 characters.",
+        "role": "School role",
+        "submit": "Create user",
+        "submitting": "Creating…",
+        "created": "The user has been created and added to this school.",
+        "errors": {
+          "forbidden": "You are not allowed to create users in this school.",
+          "invalidUsername": "Enter a username of at most 50 characters.",
+          "invalidEmail": "Enter a valid email address or leave the field empty.",
+          "invalidPassword": "The password must be at least 8 characters.",
+          "invalidRole": "Select a school role.",
+          "duplicateUsername": "That username is already used in this school.",
+          "duplicateEmail": "That email address is already in use."
+        }
+      }
     },
     "roles": {
       "OWNER": "Owner",

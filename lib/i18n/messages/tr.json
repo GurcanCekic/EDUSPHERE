@@ -71,7 +71,30 @@
       "noResults": "Aramanızla eşleşen üye bulunamadı.",
       "unauthorized": "Bu okulun üyelerini görüntüleme yetkiniz yok.",
       "error": "Üye listesi yüklenemedi.",
-      "retry": "Yeniden dene"
+      "retry": "Yeniden dene",
+      "create": {
+        "title": "Okul kullanıcısı oluştur",
+        "description": "Bir kullanıcı hesabı oluşturup bu okula ekleyin.",
+        "username": "Okul kullanıcı adı",
+        "usernameHint": "Okul kısa adıyla birlikte giriş yapmak için kullanılır.",
+        "email": "E-posta (isteğe bağlı)",
+        "emailHint": "Girildiğinde kullanıcı e-posta ile de giriş yapabilir.",
+        "password": "Başlangıç parolası",
+        "passwordHint": "En az 8 karakter.",
+        "role": "Okul rolü",
+        "submit": "Kullanıcı oluştur",
+        "submitting": "Oluşturuluyor…",
+        "created": "Kullanıcı oluşturuldu ve bu okula eklendi.",
+        "errors": {
+          "forbidden": "Bu okulda kullanıcı oluşturma yetkiniz yok.",
+          "invalidUsername": "En fazla 50 karakterlik bir kullanıcı adı girin.",
+          "invalidEmail": "Geçerli bir e-posta adresi girin veya alanı boş bırakın.",
+          "invalidPassword": "Parola en az 8 karakter olmalıdır.",
+          "invalidRole": "Bir okul rolü seçin.",
+          "duplicateUsername": "Bu kullanıcı adı bu okulda zaten kullanılıyor.",
+          "duplicateEmail": "Bu e-posta adresi zaten kullanılıyor."
+        }
+      }
     },
     "roles": {
       "OWNER": "Sahip",
