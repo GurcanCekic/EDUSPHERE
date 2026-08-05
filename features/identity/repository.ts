@@ -3,10 +3,12 @@ import "server-only";
 import { query, queryOne } from "@/lib/db";
 import { hashPassword } from "@/features/identity/password";
 import {
+  addExistingUserToSchoolSchema,
   createSchoolUserSchema,
   schoolInputSchema,
   schoolMembershipInputSchema,
   userInputSchema,
+  type AddExistingUserToSchool,
   type CreateSchoolUser,
   type MembershipStatus,
   type SchoolInput,
@@ -125,6 +127,37 @@ export async function createSchoolUser(
   );
 
   return created as CreatedSchoolUser;
+}
+
+/**
+ * Adds an existing user to one school and returns the new membership
+ * identifier, or null when no user has the supplied email.
+ *
+ * The lookup and the insert are a single statement, so the user cannot be
+ * removed between finding them and adding them, and no membership can be
+ * written for a user that does not exist. The school identifier is a separate
+ * argument and always comes from the validated school context.
+ *
+ * Nothing about the user is read or changed: only a membership row is added, so
+ * the global identity and every other school membership stay untouched.
+ */
+export async function addExistingUserToSchool(
+  schoolId: string,
+  input: AddExistingUserToSchool,
+): Promise<string | null> {
+  const { email, username, roleKey } =
+    addExistingUserToSchoolSchema.parse(input);
+
+  const membership = await queryOne<{ id: string }>(
+    `INSERT INTO school_memberships (school_id, user_id, role_key, username, status)
+     SELECT $1, users.id, $2, $3, 'ACTIVE'
+     FROM users
+     WHERE users.email = $4
+     RETURNING id`,
+    [schoolId, roleKey, username, email],
+  );
+
+  return membership?.id ?? null;
 }
 
 /**

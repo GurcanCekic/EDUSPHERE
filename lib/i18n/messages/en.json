@@ -94,6 +94,27 @@
           "duplicateUsername": "That username is already used in this school.",
           "duplicateEmail": "That email address is already in use."
         }
+      },
+      "addExisting": {
+        "title": "Add an existing user",
+        "description": "Give a user who already has an EDUSPHERE account access to this school.",
+        "email": "Email",
+        "emailHint": "The email of the existing EDUSPHERE account.",
+        "username": "School username (optional)",
+        "usernameHint": "Used to sign in together with the school slug.",
+        "role": "School role",
+        "submit": "Add to school",
+        "submitting": "Adding…",
+        "added": "The user has been added to this school.",
+        "errors": {
+          "forbidden": "You are not allowed to add members to this school.",
+          "invalidEmail": "Enter a valid email address.",
+          "invalidUsername": "Enter a username of at most 50 characters or leave the field empty.",
+          "invalidRole": "Select a school role.",
+          "userNotFound": "That user could not be added to this school.",
+          "duplicateMembership": "That user is already a member of this school.",
+          "duplicateUsername": "That username is already used in this school."
+        }
       }
     },
     "roles": {
