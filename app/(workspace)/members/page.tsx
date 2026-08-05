@@ -1,3 +1,4 @@
+import { AddExistingUserForm } from "./add-existing-user-form";
 import { CreateSchoolUserForm } from "./create-school-user-form";
 import { MembersFilters } from "./members-filters";
 import { membershipFilterSchema } from "@/features/identity/validation";
@@ -31,8 +32,9 @@ function displayName(
  * with a message and no query is made at all, so membership data never leaves
  * the database for them.
  *
- * Authorized roles may also create a school user here. Existing memberships
- * stay read only: there is still no way to change one.
+ * Authorized roles may also create a school user here, or add a user who
+ * already exists on the platform. Existing memberships stay read only: there is
+ * still no way to change one.
  */
 export default async function MembersPage({
   searchParams,
@@ -78,6 +80,11 @@ export default async function MembersPage({
 
       <CreateSchoolUserForm
         messages={memberMessages.create}
+        roleLabels={messages.school.roles}
+      />
+
+      <AddExistingUserForm
+        messages={memberMessages.addExisting}
         roleLabels={messages.school.roles}
       />
 

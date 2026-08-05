@@ -9,8 +9,12 @@ import {
   getCurrentSession,
   setActiveMembership,
 } from "@/features/auth/session";
-import { createSchoolUser } from "@/features/identity/repository";
 import {
+  addExistingUserToSchool,
+  createSchoolUser,
+} from "@/features/identity/repository";
+import {
+  addExistingUserToSchoolSchema,
   createSchoolUserSchema,
   schoolInputSchema,
 } from "@/features/identity/validation";
@@ -227,4 +231,99 @@ export async function createSchoolUserAction(
   revalidatePath("/members");
 
   return { created: true, error: null };
+}
+
+/**
+ * The outcome of adding an existing user to the active school.
+ *
+ * Only error codes cross this boundary; the form translates them.
+ */
+export type AddExistingUserState = {
+  added: boolean;
+  error:
+    | "forbidden"
+    | "invalidEmail"
+    | "invalidUsername"
+    | "invalidRole"
+    | "userNotFound"
+    | "duplicateMembership"
+    | "duplicateUsername"
+    | null;
+};
+
+/** Maps the first failing field to the error code the form displays. */
+const ADD_EXISTING_USER_FIELD_ERRORS: Record<
+  string,
+  AddExistingUserState["error"]
+> = {
+  email: "invalidEmail",
+  username: "invalidUsername",
+  roleKey: "invalidRole",
+};
+
+/**
+ * Adds an existing platform user to the active school.
+ *
+ * The school is taken from the validated context and the role of the caller is
+ * checked on every call, so the form can neither choose the school nor grant
+ * itself the permission. The new membership is therefore always, and only, in
+ * the active school, and the user's identity and other memberships are left
+ * exactly as they were.
+ */
+export async function addExistingUserAction(
+  _previousState: AddExistingUserState,
+  formData: FormData,
+): Promise<AddExistingUserState> {
+  const context = await requireSchoolContext();
+
+  if (!canManageSchoolAccess(context.roleKey)) {
+    return { added: false, error: "forbidden" };
+  }
+
+  const parsed = addExistingUserToSchoolSchema.safeParse({
+    email: String(formData.get("email") ?? ""),
+    username: String(formData.get("username") ?? ""),
+    roleKey: String(formData.get("roleKey") ?? ""),
+  });
+
+  if (!parsed.success) {
+    const failedField = String(parsed.error.issues[0]?.path[0] ?? "");
+
+    return {
+      added: false,
+      error: ADD_EXISTING_USER_FIELD_ERRORS[failedField] ?? "invalidEmail",
+    };
+  }
+
+  let membershipId: string | null;
+
+  try {
+    membershipId = await addExistingUserToSchool(context.schoolId, parsed.data);
+  } catch (error) {
+    // Both rules are enforced by the database, so the check and the write stay
+    // a single step and two administrators cannot add the same user, or claim
+    // the same username, at the same time.
+    const constraint = uniqueViolationConstraint(error);
+
+    if (constraint === "school_memberships_school_user_key") {
+      return { added: false, error: "duplicateMembership" };
+    }
+
+    if (constraint === "school_memberships_school_username_key") {
+      return { added: false, error: "duplicateUsername" };
+    }
+
+    throw error;
+  }
+
+  // No row is written when no user has that email. The message says only that
+  // the user could not be added, so the form does not become a way of testing
+  // which email addresses have an account.
+  if (!membershipId) {
+    return { added: false, error: "userNotFound" };
+  }
+
+  revalidatePath("/members");
+
+  return { added: true, error: null };
 }

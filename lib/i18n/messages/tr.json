@@ -94,6 +94,27 @@
           "duplicateUsername": "Bu kullanıcı adı bu okulda zaten kullanılıyor.",
           "duplicateEmail": "Bu e-posta adresi zaten kullanılıyor."
         }
+      },
+      "addExisting": {
+        "title": "Var olan kullanıcıyı ekle",
+        "description": "EDUSPHERE hesabı zaten olan bir kullanıcıya bu okula erişim verin.",
+        "email": "E-posta",
+        "emailHint": "Var olan EDUSPHERE hesabının e-posta adresi.",
+        "username": "Okul kullanıcı adı (isteğe bağlı)",
+        "usernameHint": "Okul kısa adıyla birlikte giriş yapmak için kullanılır.",
+        "role": "Okul rolü",
+        "submit": "Okula ekle",
+        "submitting": "Ekleniyor…",
+        "added": "Kullanıcı bu okula eklendi.",
+        "errors": {
+          "forbidden": "Bu okula üye ekleme yetkiniz yok.",
+          "invalidEmail": "Geçerli bir e-posta adresi girin.",
+          "invalidUsername": "En fazla 50 karakterlik bir kullanıcı adı girin veya alanı boş bırakın.",
+          "invalidRole": "Bir okul rolü seçin.",
+          "userNotFound": "Bu kullanıcı bu okula eklenemedi.",
+          "duplicateMembership": "Bu kullanıcı bu okulun zaten üyesi.",
+          "duplicateUsername": "Bu kullanıcı adı bu okulda zaten kullanılıyor."
+        }
       }
     },
     "roles": {

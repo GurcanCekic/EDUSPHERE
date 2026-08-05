@@ -163,6 +163,40 @@ export const createSchoolUserSchema = z.object({
 
 export type CreateSchoolUser = z.output<typeof createSchoolUserSchema>;
 
+/**
+ * An existing platform user added to the active school.
+ *
+ * The user is identified by email, because that is the only identifier that is
+ * global; a school username belongs to a membership and cannot address a user
+ * who is not a member yet.
+ *
+ * As with a created user, the school is never part of this input: it comes from
+ * the validated school context. The optional username is normalized before
+ * validation so the stored value is the one uniqueness is checked against.
+ */
+export const addExistingUserToSchoolSchema = z.object({
+  email: z
+    .string()
+    .transform((value) => normalizeEmail(value) ?? "")
+    .pipe(z.email()),
+  username: z
+    .union([z.string(), z.null()])
+    .optional()
+    .transform((value) => normalizeUsername(value))
+    .refine(
+      (username) =>
+        username === null || username.length <= SCHOOL_USERNAME_MAX_LENGTH,
+      {
+        message: `Username must be at most ${SCHOOL_USERNAME_MAX_LENGTH} characters.`,
+      },
+    ),
+  roleKey: schoolRoleKeySchema,
+});
+
+export type AddExistingUserToSchool = z.output<
+  typeof addExistingUserToSchoolSchema
+>;
+
 export const MEMBERSHIP_STATUS_FILTERS = [
   "ALL",
   ...MEMBERSHIP_STATUSES,
