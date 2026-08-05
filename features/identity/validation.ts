@@ -134,6 +134,35 @@ export const schoolMembershipInputSchema = z.object({
 
 export type SchoolMembershipInput = z.input<typeof schoolMembershipInputSchema>;
 
+export const SCHOOL_USERNAME_MAX_LENGTH = 50;
+
+/**
+ * A school user created by an administrator.
+ *
+ * The school is never part of this input: it comes from the validated school
+ * context, which is what keeps a new member inside the active school.
+ *
+ * Username and email are normalized before validation so that the stored value
+ * is the one uniqueness is checked against.
+ */
+export const createSchoolUserSchema = z.object({
+  username: z
+    .string()
+    .transform((value) => normalizeUsername(value) ?? "")
+    .pipe(z.string().min(1).max(SCHOOL_USERNAME_MAX_LENGTH)),
+  email: z
+    .union([z.string(), z.null()])
+    .optional()
+    .transform((value) => normalizeEmail(value))
+    .refine((email) => email === null || z.email().safeParse(email).success, {
+      message: "Email must be a valid address.",
+    }),
+  password: passwordSchema,
+  roleKey: schoolRoleKeySchema,
+});
+
+export type CreateSchoolUser = z.output<typeof createSchoolUserSchema>;
+
 export const MEMBERSHIP_STATUS_FILTERS = [
   "ALL",
   ...MEMBERSHIP_STATUSES,
